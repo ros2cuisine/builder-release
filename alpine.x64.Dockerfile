@@ -1,17 +1,16 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=arm32v7
+ARG TARGET_ARCH=x86_64
 ARG FUNCTION_NAME=disposal
-ARG FLAVOUR=ubuntu
-ARG FLAVOUR_VERSION=bionic
+ARG FLAVOUR=alpine
+ARG FLAVOUR_VERSION=3.10.3
 
 FROM ${FLAVOUR}:${FLAVOUR_VERSION}
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt update \
-    && apt upgrade -y \
+RUN apk update \
     # Install barebones
     #&& apt install -y -q \
     #    python3-numpy \
