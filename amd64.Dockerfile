@@ -1,12 +1,12 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=x86_64
+ARG TARGET_ARCH=amd64
 ARG FUNCTION_NAME=builder
-ARG FLAVOUR=ros
-ARG FLAVOUR_VERSION=eloquent-ros-base
+ARG FLAVOR=ros
+ARG FLAVOR_VERSION=eloquent
 
-FROM ${FLAVOUR}:${FLAVOUR_VERSION}
+FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -19,6 +19,7 @@ RUN apt update \
     && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add - \
     && wget http://packages.osrfoundation.org/gazebo.key \
     && apt-key add gazebo.key \
+    && rm -rf gazebo.key \
     && apt-get update -q \
     && apt upgrade -y -q \
     # Install barebones
@@ -37,7 +38,7 @@ RUN apt update \
     && pip3 install -U \
         colcon-ros-bundle \
     # Create Working directory for builds
-    && mkdir -p /cuisine/workspaces
+    && mkdir -p /cuisine/workspaces/output
 
 # Choose the directory for builds
 WORKDIR /cuisine/workspaces

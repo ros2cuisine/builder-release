@@ -1,19 +1,23 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=x86_64
+ARG TARGET_ARCH=amd64
 ARG FUNCTION_NAME=builder
-ARG FLAVOUR=alpine
-ARG FLAVOUR_VERSION=3.10.3
-
-FROM ${FLAVOUR}:${FLAVOUR_VERSION}
 ARG VCS_REF
+
+ARG FLAVOR=alpine
+ARG FLAVOR_VERSION=3.10.3
+
+FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apk update \
     # Install barebones
-    #&& apt install -y -q \
-    #    python3-numpy \
+    apk add \
+        bash \
+        python3-dev \
+    # bash for debug
     && rm -rf /var/lib/apt/lists/* \
     # Create Working directory for builds
     && mkdir -p /cuisine/workspaces
