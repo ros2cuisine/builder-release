@@ -1,21 +1,20 @@
-
+# Setup variables
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG DOCKERHUB_SOURCE_NAME=arm64v8
-ARG FUNCTION_NAME=builder
+ARG DOCKERHUB_SOURCE_USER=arm64v8
+ARG FUNCTION_NAME=bundler
 ARG FLAVOR=ros
 
 # Setup qemu
 FROM alpine AS qemu
 
-#QEMU download
+#QEMU Download
 ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-aarch64.tar.gz
 
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-# Start the builder image
-
-FROM ${DOCKERHUB_SOURCE_NAME}/${FLAVOR}:${ROS_DISTRO}-ros-core
+# Pull image
+FROM ${DOCKERHUB_SOURCE_USER}/${FLAVOR}:${ROS_DISTRO}
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 
