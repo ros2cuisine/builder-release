@@ -10,12 +10,11 @@ RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=arm64v8
+ARG DOCKERHUB_SOURCE_NAME=arm64v8/
 ARG FUNCTION_NAME=builder
 ARG FLAVOR=ros
-ARG FLAVOR_VERSION=eloquent
 
-FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-core
+FROM ${DOCKERHUB_SOURCE_NAME}${FLAVOR}:${ROS_DISTRO}-ros-core
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 
