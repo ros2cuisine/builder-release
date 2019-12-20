@@ -6,13 +6,15 @@ ARG FUNCTION_NAME=builder
 ARG FLAVOUR=ros
 ARG FLAVOUR_VERSION=eloquent
 
+# Setup qemu
 FROM alpine AS qemu
 
-#QEMU Download
+#QEMU download
 ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-aarch64.tar.gz
 
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
+# Start the builder image
 FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}-ros-core
 
 COPY --from=qemu qemu-aarch64-static /usr/bin

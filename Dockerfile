@@ -6,7 +6,8 @@ ARG FUNCTION_NAME=builder
 ARG FLAVOR=ros
 ARG FLAVOR_VERSION=eloquent
 
-FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-base
+# Start the builder image
+FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-core
 
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive

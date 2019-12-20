@@ -4,16 +4,18 @@ ARG GITLAB_USERNAME=ros2cuisine
 ARG TARGET_ARCH=arm32v7
 ARG FUNCTION_NAME=builder
 ARG FLAVOUR=ros
-ARG FLAVOUR_VERSION=latest
+ARG FLAVOUR_VERSION=eloquent
 
+# Setup qemu
 FROM alpine AS qemu
 
-#QEMU Download
+#QEMU download
 ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
 
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}
+# Start the builder image
+FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-core
 
 COPY --from=qemu qemu-arm-static /usr/bin
 
