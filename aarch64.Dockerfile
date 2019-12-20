@@ -1,12 +1,22 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=amd64
+ARG TARGET_ARCH=arm64v8
 ARG FUNCTION_NAME=builder
-ARG FLAVOR=ros
-ARG FLAVOR_VERSION=eloquent
+ARG FLAVOUR=ros
+ARG FLAVOUR_VERSION=eloquent
 
-FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-base
+FROM alpine AS qemu
+
+#QEMU Download
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-aarch64.tar.gz
+
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
+FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}-ros-core
+
+COPY --from=qemu qemu-aarch64-static /usr/bin
+
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -24,7 +34,7 @@ RUN apt update \
     && apt upgrade -y -q \
     # Install barebones
     && sudo apt install -y -q \
-    # Colcon Ros Bundle
+        # Colcon Ros Bundle
         python3-apt \
         # msgs
         ros-${ROS_DISTRO}-sensor-msgs \
@@ -44,9 +54,10 @@ RUN apt update \
 WORKDIR /cuisine/workspaces
 
 # Finishing the image
+ENTRYPOINT ["/opt/ros/$ROS_DISTRO/ros_entrypoint.sh"]
 CMD ["bash"]
 
-LABEL org.label-schema.name="ros2cuisine/builder:eloquent-x86_64" \
+LABEL org.label-schema.name="ros2cuisine/builder:eloquent-arm32v7" \
       org.label-schema.description="The Minimal build image for cuisine Docker images cycle" \
       org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-url="https://hub.docker.com/ros2cuisine/builder" \

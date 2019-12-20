@@ -1,12 +1,22 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=arm64v8
+ARG TARGET_ARCH=arm32v7
 ARG FUNCTION_NAME=builder
 ARG FLAVOUR=ros
 ARG FLAVOUR_VERSION=latest
 
+FROM alpine AS qemu
+
+#QEMU Download
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
+
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
 FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}
+
+COPY --from=qemu qemu-arm-static /usr/bin
+
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -19,11 +29,12 @@ RUN apt update \
     && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add - \
     && wget http://packages.osrfoundation.org/gazebo.key \
     && apt-key add gazebo.key \
+    && rm -rf gazebo.key \
     && apt-get update -q \
     && apt upgrade -y -q \
     # Install barebones
     && sudo apt install -y -q \
-    # Colcon Ros Bundle
+        # Colcon Ros Bundle
         python3-apt \
         # msgs
         ros-${ROS_DISTRO}-sensor-msgs \
@@ -37,7 +48,7 @@ RUN apt update \
     && pip3 install -U \
         colcon-ros-bundle \
     # Create Working directory for builds
-    && mkdir -p /cuisine/workspaces
+    && mkdir -p /cuisine/workspaces/output
 
 # Choose the directory for builds
 WORKDIR /cuisine/workspaces

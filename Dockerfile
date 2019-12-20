@@ -1,12 +1,13 @@
 
 ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
-ARG TARGET_ARCH=arm32v7
+ARG TARGET_ARCH=amd64
 ARG FUNCTION_NAME=builder
-ARG FLAVOUR=ros
-ARG FLAVOUR_VERSION=latest
+ARG FLAVOR=ros
+ARG FLAVOR_VERSION=eloquent
 
-FROM ${TARGET_ARCH}/${FLAVOUR}:${FLAVOUR_VERSION}
+FROM ${TARGET_ARCH}/${FLAVOR}:${FLAVOR_VERSION}-ros-base
+
 ARG VCS_REF
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -19,11 +20,12 @@ RUN apt update \
     && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add - \
     && wget http://packages.osrfoundation.org/gazebo.key \
     && apt-key add gazebo.key \
+    && rm -rf gazebo.key \
     && apt-get update -q \
     && apt upgrade -y -q \
     # Install barebones
     && sudo apt install -y -q \
-    # Colcon Ros Bundle
+        # Colcon Ros Bundle
         python3-apt \
         # msgs
         ros-${ROS_DISTRO}-sensor-msgs \
@@ -37,16 +39,15 @@ RUN apt update \
     && pip3 install -U \
         colcon-ros-bundle \
     # Create Working directory for builds
-    && mkdir -p /cuisine/workspaces
+    && mkdir -p /cuisine/workspaces/output
 
 # Choose the directory for builds
 WORKDIR /cuisine/workspaces
 
 # Finishing the image
-ENTRYPOINT ["/opt/ros/$ROS_DISTRO/ros_entrypoint.sh"]
 CMD ["bash"]
 
-LABEL org.label-schema.name="ros2cuisine/builder:eloquent-arm32v7" \
+LABEL org.label-schema.name="ros2cuisine/builder:eloquent-x86_64" \
       org.label-schema.description="The Minimal build image for cuisine Docker images cycle" \
       org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-url="https://hub.docker.com/ros2cuisine/builder" \
