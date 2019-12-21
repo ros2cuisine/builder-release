@@ -3,6 +3,7 @@ ARG ROS_DISTRO=eloquent
 ARG GITLAB_USERNAME=ros2cuisine
 ARG DOCKERHUB_SOURCE_USER=arm32v7
 ARG FLAVOR=ros
+ARG ROS_VERSION=eloquent-ros-base
 
 #Setup Qemu
 FROM alpine AS qemu
@@ -13,7 +14,7 @@ ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
 #pull image
-FROM ${DOCKERHUB_SOURCE_USER}/${FLAVOR}:${ROS_DISTRO}
+FROM ${DOCKERHUB_USERNAME}/${FLAVOR}:${FLAVOR_VERSION}-${TARGET_ARCH}-${TAG}
 
 COPY --from=qemu qemu-arm-static /usr/bin
 
