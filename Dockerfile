@@ -1,15 +1,17 @@
+# Set environment variables
+ARG ROS_DISTRO=eloquent
+ARG FUNCTION_NAME=builder
+ARG BUILD_USER=ros2cuisine
+ARG BUILD_REPO=bundler
+ARG BUILD_TAG_NAME=eloquent-amd64-staged
+
+# Pull the image
+FROM ${BUILD_USER}/${BUILD_REPO}:${BUILD_TAG_NAME} as bundle
 
 ARG ROS_DISTRO=eloquent
-ARG GITLAB_USERNAME=ros2cuisine
-ARG FUNCTION_NAME=builder
-ARG FLAVOR=ros
-ARG DOCKERHUB_SOURCE_NAME=amd64
-ARG ROS_VERSION=eloquent-ros-base
 
-# Start the builder image
-FROM $GITLAB_USERNAME/$FLAVOR:$FLAVOR_VERSION-$TARGET_ARCH-$TAG
-
-ARG VCS_REF
+# These are avaivable in the build image
+ENV ROS_DISTRO ${ROS_DISTRO}
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update \
@@ -40,22 +42,12 @@ RUN apt update \
     && pip3 install -U \
         colcon-ros-bundle \
     # Create Working directory for builds
-    && mkdir -p /cuisine/workspaces/output
+    && mkdir -p /cuisine/workspaces
 
 # Choose the directory for builds
 WORKDIR /cuisine/workspaces
 
 # Finishing the image
+ENTRYPOINT ["/ros_entrypoint.sh"]
+# Finishing the image
 CMD ["bash"]
-
-LABEL org.label-schema.name="ros2cuisine/builder:eloquent-x86_64" \
-      org.label-schema.description="The Minimal build image for cuisine Docker images cycle" \
-      org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.vcs-url="https://hub.docker.com/ros2cuisine/builder" \
-      org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.schema-version="1.0.0-rc1" \
-      org.label-schema.maintainer="cuisine-dev@ichbestimmtnicht.de" \
-      org.label-schema.url="https://github.com/ros2cuisine/builder-release/" \
-      org.label-schema.vendor="ichbestimmtnicht" \
-      org.label-schema.version=$BUILD_VERSION \
-      org.label-schema.docker.cmd="docker run -d ros2cuisine/builder"
