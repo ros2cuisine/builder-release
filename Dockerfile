@@ -25,9 +25,11 @@ RUN apt update \
     && apt-key add gazebo.key \
     && rm -rf gazebo.key \
     && apt-get update -q \
-    && apt upgrade -y -q \
-    # Install barebones
-    && sudo apt install -y -q \
+    && apt upgrade -y -q
+
+# Install barebones
+RUN apt-get update \
+    && apt-get install -y -q \
         # Colcon Ros Bundle
         python3-apt \
         # msgs
