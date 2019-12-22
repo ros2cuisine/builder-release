@@ -11,7 +11,7 @@ FROM ${BUILD_USER}/${BUILD_REPO}:${BUILD_TAG_NAME} as bundle
 ARG ROS_DISTRO=eloquent
 
 # These are avaivable in the build image
-ENV ROS_DISTRO ${ROS_DISTRO}
+ENV ROS_DISTRO eloquent
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update \

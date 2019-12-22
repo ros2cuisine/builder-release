@@ -26,7 +26,7 @@ COPY --from=qemu qemu-aarch64-static /usr/bin
 ARG ROS_DISTRO=eloquent
 
 # These are avaivable in the build image
-ENV ROS_DISTRO ${ROS_DISTRO}
+ENV ROS_DISTRO eloquent
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update \
