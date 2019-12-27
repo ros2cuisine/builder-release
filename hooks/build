@@ -1,23 +1,14 @@
 #!/bin/bash
 
-# Local test values
-
-# Environment
-DOCKERHUB_NAME=ros2cuisine
-SRC_NAME=${DOCKERHUB_NAME}
-DEST_REPO=builder
-SRC_REPO=bundler
-
 # dynamic Values
 apt-get update && apt-get install git -y -q
 VCS_REF="$(git rev-parse --short HEAD)"
 BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-DEST_TAG="${DOCKER_TAG}"
 
 echo "DEBUG: ${VCSREF} and ${BUILD_DATE}"
 
 # Begin generating manifest file
-echo "image: ${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}" > auto-docker-manifest.yaml
+echo "image: ${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}" > auto-docker-manifest.yaml
 echo "manifests:" >> auto-docker-manifest.yaml
 
 echo "TEST"
@@ -30,7 +21,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
     if [ ${DEST_BUILD_ARCH} == "amd64" ]; then
         DEST_ARCH=${DEST_BUILD_ARCH}
         DOCKER_PREFIX=""
-        echo "  - image: ${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
+        echo "  - image: ${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
         echo "    platform:" >> auto-docker-manifest.yaml
         echo "      architecture: ${DEST_ARCH}" >> auto-docker-manifest.yaml
         echo "      os: ${DEST_OS}" >> auto-docker-manifest.yaml
@@ -39,7 +30,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
     elif [ ${DEST_BUILD_ARCH} == "arm32v7" ]; then
         DEST_ARCH="arm"
         DOCKERFILE_PREFIX="armhf."
-        echo "  - image: ${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
+        echo "  - image: ${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
         echo "    platform:" >> auto-docker-manifest.yaml
         echo "      architecture: ${DEST_ARCH}" >> auto-docker-manifest.yaml
         echo "      os: ${DEST_OS}" >> auto-docker-manifest.yaml
@@ -49,7 +40,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
     elif [ ${DEST_BUILD_ARCH} == "arm64v8" ]; then
         DEST_ARCH="arm64"
         DOCKERFILE_PREFIX="aarch64."
-        echo "  - image: ${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
+        echo "  - image: ${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}" >> auto-docker-manifest.yaml
         echo "    platform:" >> auto-docker-manifest.yaml
         echo "      architecture: ${DEST_ARCH}" >> auto-docker-manifest.yaml
         echo "      os: ${DEST_OS}" >> auto-docker-manifest.yaml
@@ -62,7 +53,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
     fi
 
     echo "Begin Building"
-    SRC_TAG=${DOCKER_TAG}-${DEST_BUILD_ARCH}
+    SRC_BUILD_TAG=${SRC_TAG}-${DEST_BUILD_ARCH}
     DOCKERFILE="${DOCKERFILE_PREFIX}Dockerfile"
     # Build the docker image
     docker build \
@@ -74,7 +65,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
         --label vendor="ichbestimmtnicht" \
         --label vcs-url="https://gitlab.com/ros2cuisine/builder" \
         --label url="https://gitlab.com/ros2cuisine/builder" \
-        --label name="${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" \
+        --label name="${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}" \
         --label version="${BUILD_VERSION}"\
         --label build-date="${BUILD_DATE}" \
         --label vcs-ref="${VCS_REF}" \
@@ -82,19 +73,16 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
         --file "${DOCKERFILE}" \
         --build-arg ROS_DISTRO="${ROS_DISTRO}" \
         --build-arg SRC_REPO="${SRC_REPO}" \
-        --build-arg SRC_TAG="${SRC_TAG}" \
+        --build-arg SRC_TAG="${SRC_BUILD_TAG}" \
         --build-arg SRC_NAME="${SRC_NAME}" \
-        --tag "${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" \
+        --tag "${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}" \
         .
+    
+    echo "DEBUG: Push the docker image ${DEST_BUILD_ARCH}"
+    docker push ${DOCKERHUB_NAME}/${DOCKER_REPO}:${DOCKER_TAG}-${DEST_BUILD_ARCH}
 done
 
-echo "DEBUG: Push the docker images"
 
-# Cycle trough the the arches again and push the images
-for DEST_BUILD_ARCH in ${DEST_ARCHES}
-do
-    docker push ${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}
-done
 
 echo "Exit build hook"
 
