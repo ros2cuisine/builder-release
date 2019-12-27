@@ -1,6 +1,5 @@
 # Set environment variables
 ARG ROS_DISTRO
-ARG FUNCTION_NAME
 ARG SRC_NAME
 ARG SRC_REPO
 ARG SRC_TAG
@@ -19,7 +18,6 @@ ARG SRC_TAG
 
 # Pull the image
 FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} as bundle
-
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 

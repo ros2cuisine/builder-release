@@ -19,7 +19,6 @@ ARG SRC_TAG
 # Pull the image
 FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} as bundle
 
-
 COPY --from=qemu qemu-arm-static /usr/bin
 
 ARG ROS_DISTRO

@@ -12,5 +12,3 @@ chmod +x manifest-tool
 # Push the manifest
 ./manifest-tool push from-spec auto-docker-manifest.yaml
 rm -f auto-docker-manifest.yaml
-
-# Push the completed tag
