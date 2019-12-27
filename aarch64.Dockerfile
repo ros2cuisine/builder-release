@@ -1,9 +1,9 @@
 # Set environment variables
-ARG ROS_DISTRO=eloquent
-ARG FUNCTION_NAME=builder
-ARG BUILD_USER=ros2cuisine
-ARG BUILD_REPO=bundler
-ARG BUILD_TAG_NAME=eloquent-amd64-staged
+ARG ROS_DISTRO
+ARG FUNCTION_NAME
+ARG SRC_NAME
+ARG SRC_REPO
+ARG SRC_TAG
 
 # Setup qemu
 FROM alpine AS qemu
@@ -13,35 +13,21 @@ ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/
 
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-ARG BUILD_USER=ros2cuisine
-ARG BUILD_REPO=bundler
-ARG BUILD_TAG_NAME=eloquent-amd64-staged
+ARG SRC_NAME
+ARG SRC_REPO
+ARG SRC_TAG
 
 # Pull the image
-FROM ${BUILD_USER}/${BUILD_REPO}:${BUILD_TAG_NAME} as bundle
+FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} as bundle
 
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 
-ARG ROS_DISTRO=eloquent
+ARG ROS_DISTRO
 
 # These are avaivable in the build image
-ENV ROS_DISTRO eloquent
+ENV ROS_DISTRO ${ROS_DISTRO}
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt update \
-    && apt install -q -y \
-        wget \
-        curl \
-        gnupg2 \
-        lsb-release \
-    && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add - \
-    && wget http://packages.osrfoundation.org/gazebo.key \
-    && apt-key add gazebo.key \
-    && rm -rf gazebo.key \
-    && apt-get update -q \
-    && apt upgrade -y -q \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install barebones
 RUN apt-get update \
