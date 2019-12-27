@@ -7,7 +7,6 @@ DOCKERHUB_NAME=ros2cuisine
 SRC_NAME=${DOCKERHUB_NAME}
 DEST_REPO=builder
 SRC_REPO=bundler
-SRC_TAG=latest
 
 # dynamic Values
 apt-get update && apt-get install git -y -q
@@ -63,6 +62,7 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
     fi
 
     echo "Begin Building"
+    SRC_TAG=${DOCKER_TAG}-${DEST_BUILD_ARCH}
     DOCKERFILE="${DOCKERFILE_PREFIX}Dockerfile"
     # Build the docker image
     docker build \
@@ -72,8 +72,8 @@ echo "DEBUG: Begin Cycle ${DEST_BUILD_ARCH}"
         --label docker.cmd="docker run -d ros2cuisine/builder" \
         --label maintainer="cuisine@ichbestimmtnicht.de" \
         --label vendor="ichbestimmtnicht" \
-        --label vcs-url="https://gitlab.com/ros2cuisine/bundler" \
-        --label url="https://gitlab.com/ros2cuisine/bundler" \
+        --label vcs-url="https://gitlab.com/ros2cuisine/builder" \
+        --label url="https://gitlab.com/ros2cuisine/builder" \
         --label name="${DOCKERHUB_NAME}/${DEST_REPO}:${DEST_TAG}-${DEST_BUILD_ARCH}" \
         --label version="${BUILD_VERSION}"\
         --label build-date="${BUILD_DATE}" \
