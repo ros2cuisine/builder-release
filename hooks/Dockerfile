@@ -1,5 +1,4 @@
 # Set environment variables
-ARG ROS_DISTRO
 ARG SRC_NAME
 ARG SRC_REPO
 ARG SRC_TAG
