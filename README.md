@@ -30,5 +30,5 @@ RUN apt update \
 # End of builder image
 FROM ros2cuisine/bundler as bundle
 
-# Have a look at https://gitlab.com/ros2cuisine/bundler to learn how to bundle
+# Have a look at https://gitlab.com/ros2cuisine/templates/bundler to learn how to bundle
 ```
