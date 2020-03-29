@@ -11,7 +11,7 @@ ARG ROS_DISTRO
 
 FROM scratch AS buildcontext
 
-COPY . .
+COPY ros_entrypoint.sh ros_entrypoint.sh
 
 # Setup Qemu
 FROM alpine AS qemu
@@ -26,7 +26,7 @@ ARG SRC_REPO
 ARG SRC_TAG
 
 # Pull image
-FROM ${SRC_HUB}/${SRC_NAME}/${SRC_REPO}:${SRC_TAG} AS bundle
+FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} AS bundle
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 COPY --from=buildcontext ros_entrypoint.sh /ros_entrypoint.sh
