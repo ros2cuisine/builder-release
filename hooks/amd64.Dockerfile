@@ -11,12 +11,10 @@ ARG ROS_DISTRO
 
 FROM scratch AS buildcontext
 
-COPY ros_entrypoint.sh /ros_entrypoint.sh
+COPY . .
 
 # Pull the image
 FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} as bundle
-
-COPY --from=buildcontext ros_entrypoint.sh /ros_entrypoint.sh
 
 ARG ROS_DISTRO
 
