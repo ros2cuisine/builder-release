@@ -26,7 +26,7 @@ ARG SRC_REPO
 ARG SRC_TAG
 
 # Pull image
-FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} AS bundle
+FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG}-arm64v8 AS bundle
 
 COPY --from=qemu qemu-aarch64-static /usr/bin
 

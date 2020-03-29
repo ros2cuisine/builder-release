@@ -14,7 +14,7 @@ FROM scratch AS buildcontext
 COPY . .
 
 # Pull the image
-FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG} as bundle
+FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG}-amd64 as bundle
 
 ARG ROS_DISTRO
 
