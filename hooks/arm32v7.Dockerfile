@@ -11,7 +11,7 @@ ARG ROS_DISTRO
 
 FROM scratch AS buildcontext
 
-COPY ros_entrypoint.sh ros_entrypoint.sh
+COPY ros_entrypoint.sh /ros_entrypoint.sh
 
 # Setup Qemu
 FROM alpine AS qemu
