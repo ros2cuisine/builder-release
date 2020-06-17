@@ -27,14 +27,6 @@ RUN apt-get update \
     && apt-get install -y -q \
         # Colcon Ros Bundle
         python3-apt \
-        # msgs
-        ros-${ROS_DISTRO}-sensor-msgs \
-        ros-${ROS_DISTRO}-nav-msgs \
-        ros-${ROS_DISTRO}-geometry-msgs \
-        # ROS Devs
-        ros-${ROS_DISTRO}-rosidl-default-generators \
-        # Maybe outdated and not used anymoore
-        ros-${ROS_DISTRO}-ament-cmake* \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install -U \
         colcon-ros-bundle \
