@@ -7,7 +7,6 @@
 ARG SRC_NAME
 ARG SRC_REPO
 ARG SRC_TAG
-ARG ROS_DISTRO
 
 FROM scratch AS buildcontext
 
@@ -30,28 +29,13 @@ FROM ${SRC_NAME}/${SRC_REPO}:${SRC_TAG}-arm32v7 AS bundle
 
 COPY --from=qemu qemu-arm-static /usr/bin
 
-ARG ROS_DISTRO
-
-# These are variables are also avaivable in the build image
-ENV ROS_DISTRO ${ROS_DISTRO}
-ENV DEBIAN_FRONTEND noninteractive
-
 # Install barebones
 RUN apt-get update \
     && apt-get install -y -q \
         # Colcon Ros Bundle
         python3-apt \
+        ros-${ROS_DISTRO}-.*-msgs \
+        ros-${ROS_DISTRO}-ament-cmake-.* \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install -U \
-        colcon-ros-bundle \
-    # Create Working directory for builds
-    && mkdir -p /cuisine/workspaces
-
-# Choose the directory for builds
-WORKDIR /cuisine/workspaces
-
-# Finishing the image
-ENTRYPOINT ["/ros_entrypoint.sh"]
-
-# Finishing the image
-CMD ["bash"]
+        colcon-ros-bundle
