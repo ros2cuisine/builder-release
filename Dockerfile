@@ -13,8 +13,9 @@ FROM ros2cuisine/bundler as bundle
 RUN apt-get update \
     && apt-get install -y -q \
         python3-pip \
-        # Colcon Ros Bundle
+        # Colcon ROS Bundle
         python3-apt \
+        # ROS Build pkg's
         ros-${ROS_DISTRO}-.*-msgs \
         ros-${ROS_DISTRO}-ament-cmake-.* \
     && rm -rf /var/lib/apt/lists/* \
