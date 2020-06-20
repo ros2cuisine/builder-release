@@ -37,6 +37,7 @@ RUN apt-get update \
         python3-colcon-common-extensions \
         python3-colcon-ros \
         # ROS Build pkg's
+        ros-${ROS_DISTRO}-ros-core \
         ros-${ROS_DISTRO}-.*-msgs \
         ros-${ROS_DISTRO}-ament-cmake-.* \
     && rm -rf /var/lib/apt/lists/*
