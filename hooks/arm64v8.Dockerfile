@@ -33,11 +33,10 @@ COPY --from=qemu qemu-aarch64-static /usr/bin
 RUN apt-get update \
     && apt-get install -y -q \
         python3-pip \
-        # Colcon ROS Bundle
-        python3-apt \
+        # Colcon ROS
+        python3-colcon-common-extensions \
+        python3-colcon-ros \
         # ROS Build pkg's
         ros-${ROS_DISTRO}-.*-msgs \
         ros-${ROS_DISTRO}-ament-cmake-.* \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install -U \
-        colcon-ros-bundle
+    && rm -rf /var/lib/apt/lists/*
